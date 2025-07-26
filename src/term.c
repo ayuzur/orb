@@ -14,5 +14,5 @@ void term_clear() {
 }
 
 void term_goto(int x, int y) {
-	printf("\033[%d;%dH", x, y);
+	printf("\033[%d;%dH", y + 1, x + 1);
 }
