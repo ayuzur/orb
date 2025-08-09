@@ -1,7 +1,7 @@
 
 obj=obj/term.o obj/draw.o obj/utils.o obj/sleep.o
-eflags=-Wpedantic -Wall -Wextra
-flags=-I include/ $(eflags) -g3
+eflags=-Wpedantic -Wall -Wextra -Wdouble-promotion
+flags=-I include/ $(eflags)
 
 bin/orb: src/main.c $(obj)
 	gcc src/main.c obj/* $(flags) -lncursesw -lm -o bin/orb 

@@ -214,8 +214,8 @@ int main(int argc, char* argv[]) {
 			if (blowing_up) {
 				flys[i].x += flys[i].vx;
 				flys[i].y += flys[i].vy;
-				flys[i].vx *= 0.9;
-				flys[i].vy *= 0.9;
+				flys[i].vx *= 0.9f;
+				flys[i].vy *= 0.9f;
 
 				//bool horizontal_out = flys[i].x < 0 || flys[i].x > width * BRAILLE_WIDTH_IN_DOTS;
 				//bool vertical_out = flys[i].y < 0 || flys[i].y > height * BRAILLE_HEIGHT_IN_DOTS;
@@ -261,7 +261,7 @@ int main(int argc, char* argv[]) {
 			effect_draw_closest(&scr, FLY_COUNT, flys, ADD);
 		}
 		bool good_enough_velocity = false;
-		float too_small = 0.001;
+		float too_small = 0.001f;
 		for (int i = 0; i < FLY_COUNT; i++) {
 			if (flys[i].vx > too_small || flys[i].vy > too_small) {
 				good_enough_velocity = true;
