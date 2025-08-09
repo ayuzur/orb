@@ -279,8 +279,11 @@ int main(int argc, char* argv[]) {
 
 		//draw_braille_circle(&scr, cursor.p.x, cursor.p.y, cursor.r, XOR);
 		// core
-		draw_braille_circle(&scr, centerx, centery, 10, XOR);
-
+		
+		if (!blowing_up) {
+			draw_braille_circle(&scr, centerx - 1, centery, 10, SUB);
+			draw_braille_circle(&scr, centerx, centery, 10, SUB);
+		}
 		draw_braille_screen_nc(&scr);
 
 

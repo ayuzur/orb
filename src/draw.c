@@ -85,7 +85,8 @@ void draw_braille_dot(draw_BrailleScreen* scr, int x, int y, enum draw_Mode mode
 			scr->array[index] |= braille_nums[local_index];
 			break;
 		case SUB:
-			scr->array[index] = BRAILLE_EMPTY;
+			scr->array[index] |= braille_nums[local_index];
+			scr->array[index] ^= braille_nums[local_index];
 			break;
 		case XOR:
 			scr->array[index] ^= braille_nums[local_index];
