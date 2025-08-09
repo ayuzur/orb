@@ -59,10 +59,10 @@ void draw_update_braille_screen(draw_BrailleScreen* scr, int width, int height) 
 		new_size = 1;
 	}
 
-	scr->array = realloc(scr->array, new_size);
+	scr->array = (wchar_t*) realloc(scr->array, new_size * sizeof(wchar_t));
 }
 
-void draw_braille_dot(draw_BrailleScreen* scr, int x, int y) {
+void draw_braille_dot(draw_BrailleScreen* scr, int x, int y, enum draw_Mode mode) {
 	int char_x = x / BRAILLE_WIDTH_IN_DOTS;
 	int char_y = y / BRAILLE_HEIGHT_IN_DOTS;
 	
@@ -79,8 +79,18 @@ void draw_braille_dot(draw_BrailleScreen* scr, int x, int y) {
 	int local_y = y % BRAILLE_HEIGHT_IN_DOTS;
 
 	int local_index = local_y * BRAILLE_WIDTH_IN_DOTS + local_x;
-	
-	scr->array[index] |= braille_nums[local_index];
+
+	switch (mode) {
+		case ADD:
+			scr->array[index] |= braille_nums[local_index];
+			break;
+		case SUB:
+			scr->array[index] = BRAILLE_EMPTY;
+			break;
+		case XOR:
+			scr->array[index] ^= braille_nums[local_index];
+			break;
+	}
 }
 
 void draw_braille_screen(draw_BrailleScreen* scr) {
@@ -111,12 +121,7 @@ void draw_braille_screen_nc(draw_BrailleScreen* scr) {
 	}
 }
 
-// TODO
-void draw_braille_vertical_line(int x, int y1, int y2) {
-
-}
-// TODO
-void draw_braille_line(draw_BrailleScreen* scr, int x1, int y1, int x2, int y2) {
+void draw_braille_line(draw_BrailleScreen* scr, int x1, int y1, int x2, int y2, enum draw_Mode mode) {
 	int signed_diff_x = x2 - x1;
 	int signed_diff_y = y2 - y1;
 
@@ -124,7 +129,7 @@ void draw_braille_line(draw_BrailleScreen* scr, int x1, int y1, int x2, int y2) 
 		int sign = get_sign(signed_diff_y);
 		int ny = y1;
 		for (int i = 0; i <= abs(signed_diff_y); i++) {	
-			draw_braille_dot(scr, x1, ny);
+			draw_braille_dot(scr, x1, ny, mode);
 			ny += sign;
 		}
 		return;
@@ -140,11 +145,11 @@ void draw_braille_line(draw_BrailleScreen* scr, int x1, int y1, int x2, int y2) 
 
 	for (int i = 0; i <= abs(signed_diff_x); i++) {
 		int ny = nx * slope;
-		draw_braille_dot(scr, nx + x1, ny + y1);
+		draw_braille_dot(scr, nx + x1, ny + y1, mode);
 		if (abs(ny - prev_y) > 1) {
 			int ydir = get_sign(ny - prev_y);
 			for (int j = 0; j < abs(ny - prev_y); j++) {
-				draw_braille_dot(scr, prev_x + x1, prev_y + y1 + (j * ydir));
+				draw_braille_dot(scr, prev_x + x1, prev_y + y1 + (j * ydir), mode);
 			}
 		}
 		prev_y = ny;
@@ -153,4 +158,49 @@ void draw_braille_line(draw_BrailleScreen* scr, int x1, int y1, int x2, int y2) 
 	}
 }
 
+void draw_braille_circle(draw_BrailleScreen* scr, int x, int y, int radius, enum draw_Mode mode) {
 
+	// a^2 + b^2 = c^2
+	// x^2 + y^2 = r^2
+	// y^2 = r^2 - x^2
+	// y = sqrt(r^2 - x^2)
+	int left_x = x - radius;
+	int current_x = left_x;
+	int change_x = -radius;
+	int change_y = 0;
+
+	int prev_x = change_x;
+	int prev_y = change_y;
+
+	for (int i = 0; i <= radius * 2; i++) {
+		change_y = ceil(sqrtf(radius * radius - change_x * change_x));
+		int new_y = change_y + y;
+		draw_braille_dot(scr, current_x, new_y, mode);
+		if (change_y != 0) {
+			draw_braille_dot(scr, current_x, y + (y - new_y), mode);
+		}
+
+		if (abs(change_y - prev_y) > 1) {
+			int ydir = get_sign(change_y - prev_y);
+
+			int offset = 0;
+			if (change_y < prev_y) {
+				offset = 1;
+			}
+
+			for (int j = 1; j < abs(change_y - prev_y); j++) {
+				int fill_y = prev_y + y + (j * ydir);
+				draw_braille_dot(scr, prev_x + x + offset, fill_y, mode);
+				fill_y = y + (y - fill_y);
+				draw_braille_dot(scr, prev_x + x + offset, fill_y, mode);
+			}
+		}
+
+		prev_x = change_x;
+		prev_y = change_y;
+
+		change_x += 1;
+		current_x += 1;
+
+	}
+}

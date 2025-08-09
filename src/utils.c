@@ -37,3 +37,14 @@ float get_dist(int x1, int y1, int x2, int y2) {
 	
 	return dist;
 }
+
+int clamp(int i, int max, int min) {
+	if (i > max) {
+		i = max;
+	}
+	else if (i < min) {
+		i = min;
+	}
+
+	return i;
+}

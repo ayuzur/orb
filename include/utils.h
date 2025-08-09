@@ -8,4 +8,8 @@ int get_sign(int i);
 
 float get_dist(int x1, int y1, int x2, int y2);
 
+int clamp(int i, int max, int min);
+
+
+
 #endif
