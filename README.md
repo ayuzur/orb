@@ -16,3 +16,4 @@ the `orb` binary will be placed in `./bin/`
 To use `orb` pass it a command line arguement in the format of hh:mm:ss.
 Ex: `./orb 00:00:10` to set the timer to 10 seconds
 
+hit q to exit early
