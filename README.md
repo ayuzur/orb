@@ -1,6 +1,6 @@
-# just an orb in the terminal
+# orb
 
-an orb timer that explodes when a given time is reached
+an orb that explodes when a given time is reached
 
 ## building
 to get a binary
