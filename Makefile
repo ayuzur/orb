@@ -2,7 +2,8 @@ CFLAGS :=-Wpedantic -Wall -Wextra -Wdouble-promotion
 INCLUDES := -I src/include/
 LIBS := -lncursesw -lm
 
-SRCS := $(wildcard src/*.c)
+SRC_DIRS := src 
+SRCS := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 OBJS := $(SRCS:src/%.c=build/%.o)
 BIN := build/orb
 
