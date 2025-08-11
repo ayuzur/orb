@@ -1,26 +1,21 @@
+CFLAGS :=-Wpedantic -Wall -Wextra -Wdouble-promotion
+INCLUDES := -I src/include/
+LIBS := -lncursesw -lm
 
-obj=obj/term.o obj/draw.o obj/utils.o obj/sleep.o
-eflags=-Wpedantic -Wall -Wextra -Wdouble-promotion
-flags=-I include/ $(eflags)
+SRC_DIRS := src 
+SRCS := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
+OBJS := $(SRCS:src/%.c=build/%.o)
+BIN := build/orb
 
-bin/orb: src/main.c $(obj)
-	gcc src/main.c obj/* $(flags) -lncursesw -lm -o bin/orb 
+$(BIN): $(SRCS)
+	mkdir -p build
+	gcc $(SRCS) $(INCLUDES) $(CFLAGS) $(LIBS) -o $(BIN)
 
-obj/term.o: src/term.c include/term.h
-	gcc -c src/term.c $(flags) -o obj/term.o
-
-obj/draw.o: src/draw.c include/draw.h
-	gcc -c src/draw.c $(flags) -o obj/draw.o
-
-obj/utils.o: src/utils.c include/utils.h
-	gcc -c src/utils.c $(flags) -o obj/utils.o
-
-obj/sleep.o: src/sleep.c include/sleep.h
-	gcc -c src/sleep.c $(flags) -o obj/sleep.o
-
-run:
-	./bin/orb
+#We can't pass args into the make invocation, so this defaults to 1 for dev
+run: $(BIN)
+	./$(BIN) "00:00:01"
 
 clean:
-	rm obj/*
-	rm bin/*
+	rm -rf build/*
+
+.PHONY: all clean run test

@@ -9,7 +9,7 @@ to get a binary
     - (if you are on mac you may need to remove the w from "ncursesw" in the makefile)
 3. run `make`
 
-the `orb` binary will be placed in `./bin/`
+the `orb` binary will be placed in `./build/orb`
 
 ## usage
 
